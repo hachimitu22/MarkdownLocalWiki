@@ -12,7 +12,7 @@ Standalone Markdown wiki by using marked.js(custom) and HTA.
 
 Hachimitu's Todo
 ======
-- [ ] 編集ページでのプレビュー
+- [X] 編集ページでのプレビュー
 - [ ] タブ機能
 - [ ] ショートカット Ctrl + s で保存
 - [ ] ショートカット Ctrl + e で編集モードへ切り替え
