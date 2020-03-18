@@ -114,7 +114,10 @@ function open(pagename){
     setPageName(pagename);
     setContent(html);
     showEditLink();
-	createToc();
+    createToc();
+    
+    //ショートカットキー設定
+    shortcut.remove('ctrl+s');
 }
 
 //履歴保存
@@ -211,6 +214,12 @@ function edit(pagename){
     id('textarea').innerText = content;
     updateEditPreview();
     hideEditLink();
+
+    //ショートカットキー設定
+    shortcut.add('ctrl+s', function () {
+        quickSave(pagename);
+        alert('saved ' + pagename);
+    });
 }
 
 //編集ページのプレビューを更新する
@@ -260,6 +269,18 @@ function save(pagename){
     utf8_saveToFile(filepath, content);
     open(pagename);
 
+}
+
+//編集モードを終了せずに保存する
+function quickSave(pagename) {
+    var content = id('textarea').innerText;
+
+    var filepath = getFilePath(pagename);
+    if(checkPageName(pagename) == false)
+    {//Out of work directory
+        return;
+    }
+    utf8_saveToFile(filepath, content);
 }
 
 //ページのリストを取得する
