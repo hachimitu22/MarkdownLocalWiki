@@ -118,6 +118,9 @@ function open(pagename){
     
     //ショートカットキー設定
     shortcut.remove('ctrl+s');
+    shortcut.add('ctrl+e', function () {
+        edit(pagename);
+    });
 }
 
 //履歴保存
@@ -216,6 +219,7 @@ function edit(pagename){
     hideEditLink();
 
     //ショートカットキー設定
+    shortcut.remove('ctrl+e');
     shortcut.add('ctrl+s', function () {
         quickSave(pagename);
         alert('saved ' + pagename);
