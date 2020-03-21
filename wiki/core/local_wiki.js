@@ -33,6 +33,49 @@ var fso = new ActiveXObject("Scripting.FileSystemObject");
 var oBaseFolder = getBaseFolder();
 var pageNameStack = new Array();
 
+// hta用のmarked.jsオプションを定義
+var htaMarkedOptions = {};
+htaMarkedOptions.renderer = (function () {
+    var renderer = new marked.Renderer();
+    renderer.link = function(href, title, text) {
+        if (this.options.sanitize) {
+            try {
+            var prot = decodeURIComponent(unescape(href))
+                .replace(/[^\w:]/g, '')
+                .toLowerCase();
+            } catch (e) {
+            return '';
+            }
+            if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+            return '';
+            }
+        }
+        
+        if ( href.match(/((mailto|http|https|ftp|Notes|file):*)/ig)) {
+            var out = '<a href="' + href + '"' + ' target="_blank" ';
+            title = "";
+        }else if( href.match(/^\\(\\).+/ig )){
+            var out = '<a href="' + href + '"' + ' target="_blank" ';
+        }else if( href.match(/\.([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/ig)){
+            var out = '<a href="' + href + '"' + ' target="_blank" '; ;
+        }else if( href.match(/^(?:[\w]\:|\\)(\\[a-z_\-\s0-9\.]+)/ig)){
+            var ss = href.split("\\");
+            var out =  "<a href='javascript:OpenFolder(\"" + ss + "\")'";
+            title = "";
+        }else{
+            var out =  "<a href='javascript:open(\"" + href + "\")'";
+            title = "";
+        }
+        
+        if (title) {
+            out += ' title="' + title + '"';
+        }
+        out += '>' + text + '</a>';
+        return out;
+    };
+    return renderer;
+})();
+
 //このHTMLファイルが置かれているフォルダのパス名を取得する
 function getBaseFolder(){
     return fso.GetFolder(CONFIG.base_dirctory);
@@ -94,7 +137,7 @@ function open(pagename){
 
 
     //いわゆるmarked.jsを使用（一部改造）
-    var html = marked(content);
+    var html = marked(content, htaMarkedOptions);
 
 
 
@@ -229,7 +272,7 @@ function edit(pagename){
 //編集ページのプレビューを更新する
 function updateEditPreview() {
     var content = id('textarea').innerText;
-    id('editPreview').innerHTML = marked(content);
+    id('editPreview').innerHTML = marked(content, htaMarkedOptions);
 }
 
 //いま見ているページを編集する
@@ -340,7 +383,7 @@ function viweCreatedList(myFiles,title){
     }
 
     //いわゆるmarked.jsを使用（一部改造）
-    var html = marked(content);
+    var html = marked(content, htaMarkedOptions);
 
     //表示履歴
     setHistory( title );
@@ -367,7 +410,7 @@ function createToc(){
         list.push(' - [' + myFiles[i] + '](' + myFiles[i] + ')' );
     }
     var content = list.join("\r\n");
-    var html = marked(content);
+    var html = marked(content, htaMarkedOptions);
     id('toc').innerHTML = html;
     fixed_side_toc();
 }
