@@ -195,6 +195,9 @@ shortcut = {
 				}
 			}
 		}
+
+		if (this.all_shortcuts[shortcut_combination]) this.remove(shortcut_combination);
+
 		this.all_shortcuts[shortcut_combination] = {
 			'callback':func, 
 			'target':ele, 
