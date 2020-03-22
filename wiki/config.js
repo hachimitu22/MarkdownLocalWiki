@@ -4,6 +4,7 @@
 var CONFIG = {
     topPage: 'top_page',
     base_dirctory: './doc',
+    html_directory: './html',
     showHistory: true,
     showFileInfo: true,
     read_only_mode: false

@@ -81,6 +81,10 @@ function getBaseFolder(){
     return fso.GetFolder(CONFIG.base_dirctory);
 }
 
+//HTMLで出力するフォルダのパス名を取得する
+function getHTMLFolder(){
+    return fso.GetFolder(CONFIG.html_directory);
+}
 
 //エクスプローラでフォルダ・ファイルを開く
 function OpenFolder(Path){
@@ -293,9 +297,9 @@ function saveToHTML() {
             + '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'
             + '<meta charset="UTF-8" />'
             + '<meta http-equiv="X-UA-Compatible" content="IE=9" />'
-            + '<link type="text/css" rel="stylesheet" href="../core/local_wiki_side_toc.css">'
-            + '<link rel="stylesheet" href="../core/github.css">'
-            + '<link rel="stylesheet" href="../core/highlight/styles/vs.css" />'
+            + '<link type="text/css" rel="stylesheet" href="./core/local_wiki_side_toc.css">'
+            + '<link rel="stylesheet" href="./core/github.css">'
+            + '<link rel="stylesheet" href="./core/highlight/styles/vs.css" />'
             + '</head>'
             + '<body>',
         afterBody: '</body></html>',
@@ -309,6 +313,7 @@ function saveToHTML() {
         contentMain: ''
     };
 
+    //全ファイルをHTMLで出力
     for (var i = 0; i < pageList.length; i++){
         var pagename = pageList[i];
 
@@ -316,7 +321,7 @@ function saveToHTML() {
         html.contentMain = '<div id="main">' + marked(content) + '</div>';
 
         var filename = pagename + ".html";
-        var filepath = oBaseFolder.Path + "\\" +  filename;
+        var filepath = getHTMLFolder().Path + "\\" +  filename;
         utf8_saveToFile(filepath, ''
             + html.beforeBody
             + html.contentMain
@@ -324,6 +329,9 @@ function saveToHTML() {
             + html.afterBody
         );
     }
+
+    //JavaScript, cssをコピー
+    fso.CopyFolder(oBaseFolder.Path + "\\..\\core", getHTMLFolder().Path + "\\core", true);
     alert('saved html files.');
 }
 
