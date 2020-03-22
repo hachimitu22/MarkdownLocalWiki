@@ -288,6 +288,17 @@ function editCurrentPage(){
 //ページをHTMLで保存する
 function saveToHTML() {
     var pageList = getPageList();
+
+    var htaToHTMLMarkedOptions = {};
+    htaToHTMLMarkedOptions.renderer = (function () {
+        var renderer = new marked.Renderer();
+        renderer.link = function (href, title, text) {
+            href += '.html';
+            return (new marked.Renderer()).link(href, title, text);
+        };
+        return renderer;
+    })();
+
     var html = {
         beforeBody: ''
             + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
@@ -308,7 +319,7 @@ function saveToHTML() {
             for(var i = 0; i < pageList.length; i++){
                 list.push(' - [' + pageList[i] + '](' + pageList[i] + ')' );
             }
-            return '<div id="sideWrap">' + marked(list.join("\r\n")) + '</div>';
+            return '<div id="sideWrap">' + marked(list.join("\r\n"), htaToHTMLMarkedOptions) + '</div>';
         })(),
         contentMain: ''
     };
@@ -318,7 +329,7 @@ function saveToHTML() {
         var pagename = pageList[i];
 
         var content = getContent(pagename);
-        html.contentMain = '<div id="main">' + marked(content) + '</div>';
+        html.contentMain = '<div id="main">' + marked(content, htaToHTMLMarkedOptions) + '</div>';
 
         var filename = pagename + ".html";
         var filepath = getHTMLFolder().Path + "\\" +  filename;
