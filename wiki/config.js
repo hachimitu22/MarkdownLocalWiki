@@ -14,6 +14,7 @@ var CONFIG = {
 **------------------------------------------------------------------*/
 var VALUES = {
   editTitle: '編集',
+  saveHTML: 'HTML出力',
   pagelistTitle: 'ページ一覧',
   sarchTitle: '検索',
   newPageTitle: '新規作成',

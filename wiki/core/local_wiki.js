@@ -281,6 +281,52 @@ function editCurrentPage(){
     edit(pagename);
 }
 
+//ページをHTMLで保存する
+function saveToHTML() {
+    var pageList = getPageList();
+    var html = {
+        beforeBody: ''
+            + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+            + '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">'
+            + '<head>'
+            + '<hta:application navigable="yes">'
+            + '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'
+            + '<meta charset="UTF-8" />'
+            + '<meta http-equiv="X-UA-Compatible" content="IE=9" />'
+            + '<link type="text/css" rel="stylesheet" href="../core/local_wiki_side_toc.css">'
+            + '<link rel="stylesheet" href="../core/github.css">'
+            + '<link rel="stylesheet" href="../core/highlight/styles/vs.css" />'
+            + '</head>'
+            + '<body>',
+        afterBody: '</body></html>',
+        contentSub: (function () {
+            var list = [];
+            for(var i = 0; i < pageList.length; i++){
+                list.push(' - [' + pageList[i] + '](' + pageList[i] + ')' );
+            }
+            return '<div id="sideWrap">' + marked(list.join("\r\n")) + '</div>';
+        })(),
+        contentMain: ''
+    };
+
+    for (var i = 0; i < pageList.length; i++){
+        var pagename = pageList[i];
+
+        var content = getContent(pagename);
+        html.contentMain = '<div id="main">' + marked(content) + '</div>';
+
+        var filename = pagename + ".html";
+        var filepath = oBaseFolder.Path + "\\" +  filename;
+        utf8_saveToFile(filepath, ''
+            + html.beforeBody
+            + html.contentMain
+            + html.contentSub
+            + html.afterBody
+        );
+    }
+    alert('saved html files.');
+}
+
 //ページ名チェック
 //@todo ファイル名/フォルダ名のWinsows禁則文字チェック
 function checkPageName(pagename)
@@ -635,6 +681,7 @@ function initNavigation(){
     //editLink
     makeLink('topPageLink','openTopPage()',CONFIG.topPage);
     makeLink('editLink','editCurrentPage()',VALUES.editTitle);
+    makeLink('saveToHTMLLink','saveToHTML()',VALUES.saveHTML);
     makeLink('PagelistLink','openIndexPage()',VALUES.pagelistTitle);
     makeLink('SarchLink','FindIndexPage()',VALUES.sarchTitle);
     makeLink('newPageLink','NewPage()',VALUES.newPageTitle);
