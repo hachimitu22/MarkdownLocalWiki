@@ -293,7 +293,7 @@ function saveToHTML() {
     htaToHTMLMarkedOptions.renderer = (function () {
         var renderer = new marked.Renderer();
         renderer.link = function (href, title, text) {
-            href += '.html';
+            if(pageList.indexOf(href) >= 0) href += '.html';
             return (new marked.Renderer()).link(href, title, text);
         };
         return renderer;
